@@ -1,0 +1,17 @@
+body {
+  min-height: 200px;
+  padding-top: 70px;
+}
+
+.graphical {
+  height: 500px;
+  float: left;
+  width: 75%;
+  border: 1px solid black;
+}
+
+#simulation-menu {
+  width: 20%;
+  float: right;
+  border: 1px solid red;
+}

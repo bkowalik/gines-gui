@@ -1,0 +1,34 @@
+@(message: String)
+
+@main("Gines GUI") {
+<script type="text/javascript">
+$(function() {
+    $('#tabs').tabs({
+        beforeActivate: function(event, ui) {
+            var tabs = $('#tabs ul li');
+            tabs.each(function() {
+                $(this).removeClass('active');
+            });
+            $(tabs[ui.newTab.index()]).addClass('active');
+        }
+    });
+});
+</script>
+<div class="container" ng-app="gines" ng-controller="ginesCtrl" ng-init="init()">
+    <div id="tabs">
+        <ul class="nav nav-pills">
+            <li class="active"><a href="#simulation-sigma">World</a></li>
+            <li><a href="#charts">Live charts</a></li>
+        </ul>
+        <div id="simulation-sigma" class="graphical">
+        </div>
+        <div id="charts" class="graphical">
+        </div>
+    </div>
+
+    <div id="simulation-menu">
+        <button type="button" class="btn btn-lg btn-success">Start</button>
+        <button type="button" class="btn btn-lg btn-danger">Stop</button>
+    </div>
+</div>
+}
