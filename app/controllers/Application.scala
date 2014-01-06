@@ -12,6 +12,7 @@ import scala.util.{Success, Failure}
 import akka.util.Timeout
 
 object Application extends Controller {
+  private val logger = Logger("application")
 
   val (out, channel) = Concurrent.broadcast[JsValue]
   private val adminPort = Play.current.configuration.getString("gines.simulation.admin.port") match {
@@ -36,20 +37,19 @@ object Application extends Controller {
     Future(Ok(views.html.listSimulations("")))
   }
 
-  def listenSimulation(simHost: String) = Action.async {
+  def listenSimulation(simHost: String) = Action { req =>
+    logger.debug("Nasłuchuje")
     implicit val timeout: Timeout = 5000
-    GinesActors.system.actorSelection(simHost).resolveOne().onComplete{
-      //case Success(actor) => ???
-      case Failure(ex) => GinesActors.system.actorOf(ListenerActor(simHost, port, channel))
+    GinesActors.system.actorSelection(s"/user/$simHost").resolveOne().onComplete{
+      case Success(actor) => ()
+      case Failure(ex) => logger.debug("Nie ma aktora"); GinesActors.system.actorOf(ListenerActor(simHost, port, channel), name=simHost)
     }
 
-    val ret = Ok.chunked(out
-      &> filter(simHost)
+    Ok.feed(out
+      //&> filter(simHost)
       &> Concurrent.buffer(50)
       &> EventSource()
     ).as("text/event-stream")
-
-    Future(ret)
   }
 
   def admin(simHost: String) = WebSocket.using[JsValue] { request =>

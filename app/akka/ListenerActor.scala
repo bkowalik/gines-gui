@@ -13,9 +13,12 @@ class ListenerActor(val ip: String, val port: Int, val channel: Concurrent.Chann
   def receive: Actor.Receive = {
     case Connecting => log.debug("Connecting...")
     case m: ZMQMessage => {
-      val payload = Json.parse(m.frame(1).utf8String)
-      channel.push(payload)
+      val payload = m.frame(1).utf8String
+      val json = Json.parse(payload)
+      log.debug(json.toString)
+      channel.push(json)
     }
+    case Closed => log.debug("Connection closed")
     case _ => log.warning("Strange message")
   }
 }
