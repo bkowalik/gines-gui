@@ -1,10 +1,16 @@
 'use strict';
 
-angular.module('gines.controllers', []).controller('ginesCtrl', function($scope) {
+angular.module('gines.controllers', []).controller('ginesCtrl', function($scope, $q) {
     $scope.admin = null;
     $scope.events = null;
     $scope.world = null;
     $scope.chart = null;
+    $scope.admin = null;
+    $scope.colors = {
+        "School": "171,153,133",
+        "Home": "236,215,188",
+        "Work": "143,130,121"
+    };
 
     $scope.init = function() {
         // Instanciate sigma.js and customize it :
@@ -100,6 +106,25 @@ angular.module('gines.controllers', []).controller('ginesCtrl', function($scope)
             $scope.updateWorld($scope.world, data["world"]);
             $scope.updateGraph($scope.chart, data["day"], data["condition"]);
         };
+
+        $scope.admin = new WebSocket("ws://localhost:9000/admin/localhost");
+        $scope.admin.onopen = function() {
+            console.log("Opening");
+        };
+        $scope.admin.onerror = function(msg) {
+            console.log("ERROR");
+            console.log(msg);
+        };
+        $scope.admin.onclose = function(msg) {
+            console.log("CLOSE");
+            console.log(msg);
+        };
+
+        $scope.admin.onmessage = function(message) {
+            console.log("MESSAGE");
+            var data = JSON.parse(message.data);
+            console.log(data);
+        };
     };
 
     $scope.updateWorld = function(graph, world) {
@@ -108,14 +133,14 @@ angular.module('gines.controllers', []).controller('ginesCtrl', function($scope)
         //TODO: redrawing world
         Object.keys(world).forEach(function(key) {
             var point = key.substring(1,key.length-1).split(',');
-            //console.log(point);
-            $scope.world.addNode('cell '+ key + ' count ' + world[key]['count'],{
+            var type = world[key]['typ']['name'];
+            var count = world[key]['count'];
+            var condition = world[key]['condition'];
+            $scope.world.addNode('cell '+ key + ' count ' + count,{
                 'x': point[0],
                 'y': point[1],
-                'size': 0.5+4.5*Math.random(),
-                'color': 'rgb('+Math.round(Math.random()*256)+','+
-                    Math.round(Math.random()*256)+','+
-                    Math.round(Math.random()*256)+')'
+                'size': 1.5+0.8*count,
+                'color': 'rgb(' + $scope.colors[type] + ')'
             });
         });
         graph.draw();
@@ -135,5 +160,23 @@ angular.module('gines.controllers', []).controller('ginesCtrl', function($scope)
             y: condition["healthy"]
         }, false);
         chart.redraw();
+    };
+
+    $scope.startSimulation = function() {
+        $scope.admin.send(JSON.stringify({
+            'command': 'startSimulation'
+        }));
+    };
+
+    $scope.pauseSimulation = function() {
+        $scope.admin.send(JSON.stringify({
+            'command': 'pauseSimulation'
+        }));
+    };
+
+    $scope.stopSimulation = function() {
+        $scope.admin.send(JSON.stringify({
+            'command': 'stopSimulation'
+        }));
     };
 });

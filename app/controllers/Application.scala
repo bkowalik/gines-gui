@@ -10,6 +10,8 @@ import play.api.libs.EventSource
 import akka.{SimulationAdminActor, ListenerActor, GinesActors}
 import scala.util.{Success, Failure}
 import akka.util.Timeout
+import akka.actor.ActorSystem
+import akka.SimulationAdminActor.SendCommand
 
 object Application extends Controller {
   private val logger = Logger("application")
@@ -25,6 +27,16 @@ object Application extends Controller {
     case None => throw new Exception("Unable to read port from configuration")
   }
 
+  private def processWebSocketIncoming[T](host: String, out: Concurrent.Channel[JsValue],system: ActorSystem)(msg: T) = {
+    implicit val timeout: Timeout = 5000
+    system.actorSelection(s"/user/${host}-admin").resolveOne().onComplete {
+      case Success(actor) => actor ! msg
+      case Failure(ex) => {
+        val actor = system.actorOf(SimulationAdminActor(), name=s"${host}-admin")
+      }
+    }
+  }
+
   def filter(simHost: String) = Enumeratee.filter[JsValue] {
     json: JsValue => (json \ "serverHost").as[String] == simHost
   }
@@ -33,12 +45,11 @@ object Application extends Controller {
     Ok(views.html.index("Your new application is ready."))
   }
 
-  def listSimulations = Action.async { request =>
+  def listSimulations = Action.async { implicit request =>
     Future(Ok(views.html.listSimulations("")))
   }
 
   def listenSimulation(simHost: String) = Action { req =>
-    logger.debug("Nasłuchuje")
     implicit val timeout: Timeout = 5000
     GinesActors.system.actorSelection(s"/user/$simHost").resolveOne().onComplete{
       case Success(actor) => ()
@@ -54,10 +65,9 @@ object Application extends Controller {
 
   def admin(simHost: String) = WebSocket.using[JsValue] { request =>
     val (out, channel) = Concurrent.broadcast[JsValue]
-    val admin = GinesActors.system.actorOf(SimulationAdminActor(simHost, adminPort))
 
     val in = Iteratee.foreach[JsValue] { msg =>
-      admin ! msg
+      GinesActors.adminActor ! SendCommand(simHost, 22323, channel, msg)
     }
 
     (in,out)

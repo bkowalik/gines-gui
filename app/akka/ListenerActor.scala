@@ -3,7 +3,7 @@ package akka
 import akka.actor.{Props, Actor, ActorLogging}
 import akka.zeromq._
 import akka.zeromq.Listener
-import play.api.libs.iteratee.{Concurrent, Enumerator, Enumeratee}
+import play.api.libs.iteratee.Concurrent
 import play.api.libs.json.{Json, JsValue}
 
 class ListenerActor(val ip: String, val port: Int, val channel: Concurrent.Channel[JsValue]) extends Actor with ActorLogging {
@@ -15,7 +15,7 @@ class ListenerActor(val ip: String, val port: Int, val channel: Concurrent.Chann
     case m: ZMQMessage => {
       val payload = m.frame(1).utf8String
       val json = Json.parse(payload)
-      log.debug(json.toString)
+      //log.debug(json.toString)
       channel.push(json)
     }
     case Closed => log.debug("Connection closed")

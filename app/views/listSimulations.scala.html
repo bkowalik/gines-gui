@@ -1,4 +1,4 @@
-@(message: String)
+@(message: String)( implicit request: RequestHeader )
 
 @main("Gines GUI") {
 <script type="text/javascript">
@@ -27,8 +27,8 @@ $(function() {
     </div>
 
     <div id="simulation-menu">
-        <button type="button" class="btn btn-lg btn-success">Start</button>
-        <button type="button" class="btn btn-lg btn-danger">Stop</button>
+        <button type="button" class="btn btn-lg btn-success" ng-click="startSimulation()">Start</button>
+        <button type="button" class="btn btn-lg btn-danger" ng-click="stopSimulation()">Stop</button>
     </div>
 </div>
 }
