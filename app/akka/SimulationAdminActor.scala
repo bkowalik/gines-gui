@@ -28,18 +28,24 @@ class SimulationAdminActor extends Actor with ActorLogging {
     case SendCommand(host, port, stream, cmd) => {
       connections get(host) map { remote =>
         log.debug(s"Message to $host: ${cmd.toString}")
-        try {
-          remote.socket ! ZMQMessage(ByteString("gines"), ByteString(cmd.toString))
-        } catch {
-          case e: Exception => {
-            connections -= host
-            log.debug(s"Socket failure. Removing host $host")
-          }
-        }
+        sendCommand(remote, host, cmd)
       } getOrElse {
         log.debug(s"First use of $host. Creating socket")
         val socket = ZeroMQExtension(context.system).newSocket(SocketType.Req, Listener(self), Connect(s"tcp://$host:$port"))
-        connections += host -> RemoteSimulation(socket, stream)
+        val remote = RemoteSimulation(socket, stream)
+        connections += host -> remote
+        sendCommand(remote, host, cmd)
+      }
+    }
+  }
+
+  def sendCommand(remote: SimulationAdminActor.RemoteSimulation, host: String, cmd: JsValue) {
+    try {
+      remote.socket ! ZMQMessage(ByteString("gines"), ByteString(cmd.toString))
+    } catch {
+      case e: Exception => {
+        connections -= host
+        log.debug(s"Socket failure. Removing host $host")
       }
     }
   }

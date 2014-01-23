@@ -4,14 +4,16 @@ body {
 }
 
 .graphical {
+  margin: auto;
   height: 500px;
   float: left;
-  width: 75%;
+  clear: both;
+  width: 90%;
   border: 1px solid black;
 }
 
 #simulation-menu {
-  width: 20%;
+  margin: auto;
+  width: 90%;
   float: right;
-  border: 1px solid red;
 }

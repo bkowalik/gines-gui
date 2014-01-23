@@ -45,8 +45,8 @@ object Application extends Controller {
     Ok(views.html.index("Your new application is ready."))
   }
 
-  def listSimulations = Action.async { implicit request =>
-    Future(Ok(views.html.listSimulations("")))
+  def listenLocal = Action.async { implicit request =>
+    Future(Ok(views.html.listenLocal("")))
   }
 
   def listenSimulation(simHost: String) = Action { req =>
@@ -72,6 +72,4 @@ object Application extends Controller {
 
     (in,out)
   }
-
-  def contact = TODO
 }

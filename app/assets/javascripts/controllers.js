@@ -164,19 +164,13 @@ angular.module('gines.controllers', []).controller('ginesCtrl', function($scope,
 
     $scope.startSimulation = function() {
         $scope.admin.send(JSON.stringify({
-            'command': 'startSimulation'
-        }));
-    };
-
-    $scope.pauseSimulation = function() {
-        $scope.admin.send(JSON.stringify({
-            'command': 'pauseSimulation'
+            'command': 'start'
         }));
     };
 
     $scope.stopSimulation = function() {
         $scope.admin.send(JSON.stringify({
-            'command': 'stopSimulation'
+            'command': 'stop'
         }));
     };
 });

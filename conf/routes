@@ -4,9 +4,8 @@
 
 # Home page
 GET     /                           controllers.Application.index
-GET     /list                       controllers.Application.listSimulations
+GET     /listenLocal                controllers.Application.listenLocal
 GET     /listen/:host               controllers.Application.listenSimulation(host: String)
-GET     /contact                    controllers.Application.contact
 GET     /admin/:host                controllers.Application.admin(host: String)
 
 # Map static resources from the /public folder to the /assets URL path
