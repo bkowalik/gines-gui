@@ -163,6 +163,10 @@ angular.module('gines.controllers', []).controller('ginesCtrl', function($scope,
     };
 
     $scope.startSimulation = function() {
+        Object.keys($scope.chart.series).forEach(function(key){
+            $scope.chart.series[key].setData([]);
+        });
+        $scope.chart.redraw();
         $scope.admin.send(JSON.stringify({
             'command': 'start'
         }));
