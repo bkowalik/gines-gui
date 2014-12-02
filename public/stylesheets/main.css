@@ -10,6 +10,8 @@ body {
   clear: both;
   width: 90%;
   border: 1px solid black;
+  background: url("zielona.jpg") no-repeat center;
+  background-size: contain;
 }
 
 #simulation-menu {
