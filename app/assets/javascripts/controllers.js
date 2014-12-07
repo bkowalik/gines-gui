@@ -134,6 +134,10 @@ angular.module('gines.controllers', []).controller('ginesCtrl', function($scope,
         Object.keys(world).forEach(function(key) {
             var point = key.substring(1,key.length-1).split(',');
             var type = world[key]['typ']['name'];
+
+            if (type === "FakeHome")
+                return
+
             var count = world[key]['count'];
             var condition = world[key]['condition'];
             $scope.world.addNode('cell '+ key + ' count ' + count,{
