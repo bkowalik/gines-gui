@@ -140,11 +140,12 @@ angular.module('gines.controllers', []).controller('ginesCtrl', function($scope,
 
             var count = world[key]['count'];
             var condition = world[key]['condition'];
+            var reddish = 255 - Math.floor(condition * 255);
             $scope.world.addNode('cell '+ key + ' count ' + count,{
                 'x': point[0],
                 'y': point[1],
                 'size': 1.5+0.8*count,
-                'color': 'rgb(' + $scope.colors[type] + ')'
+                'color': 'rgb(255,' + reddish + ',' + reddish + ')'
             });
         });
         graph.draw();
