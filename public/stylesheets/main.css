@@ -8,10 +8,51 @@ body {
   height: 500px;
   float: left;
   clear: both;
-  width: 90%;
+  width: 70%;
   border: 1px solid black;
-  background: url("zielona.jpg") no-repeat center;
+  background: url("zielona.jpg") no-repeat;
   background-size: contain;
+  background-position: 44% 50%;
+}
+
+.legend {
+  float: right;
+}
+
+.green_rect {
+  width:20px;
+  height:20px;
+  background:#2EB800;
+}
+
+.light_brown {
+  width:20px;
+  height:20px;
+  background: #B98B5A;
+}
+
+.brown {
+  width:20px;
+  height:20px;
+  background: #B95B01;
+}
+
+.red {
+  width:20px;
+  height:20px;
+  background: #FD0100;
+}
+
+.pink {
+  width:20px;
+  height:20px;
+  background: #FE003E;
+}
+
+.violet {
+  width:20px;
+  height:20px;
+  background: #DE6EC2;
 }
 
 #simulation-menu {
@@ -19,3 +60,5 @@ body {
   width: 90%;
   float: right;
 }
+
+
